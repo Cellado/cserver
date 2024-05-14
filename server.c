@@ -18,6 +18,12 @@
 
 
 void init_motor() {
+
+  if (gpioInitialise() < 0) {
+    printf("Pigpio initialization failed\n");
+    exit(1); 
+  }
+  
   gpioSetMode(MOTOR1F, PI_OUTPUT);
   gpioSetMode(MOTOR1B, PI_OUTPUT);
   gpioSetMode(MOTOR2F, PI_OUTPUT);
