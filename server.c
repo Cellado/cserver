@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <ctype.h>
 // motor control
-#include <wiringPi.h>
+#include <pigpio.h>
 
 #define MOTOR1F 17
 #define MOTOR1B 27
@@ -19,23 +19,23 @@
 
 void init_motor() {
 
-  if (wiringPiSetup() == -1) {
+  if (gpioInitialise() < 0) {
     fprintf(stderr, "-1 initialization failed\n");
     exit(1); 
   }
   
-  pinMode(MOTOR1F, OUTPUT);
-  pinMode(MOTOR1B, OUTPUT);
-  pinMode(MOTOR2F, OUTPUT);
-  pinMode(MOTOR2B, OUTPUT);
+  gpioSetMode(MOTOR1F, PI_OUTPUT);
+  gpioSetMode(MOTOR1B, PI_OUTPUT);
+  gpioSetMode(MOTOR2F, PI_OUTPUT);
+  gpioSetMode(MOTOR2B, PI_OUTPUT);
   
 }
 
 void set_pins(int M1F, int M1B, int M2F, int M2B) {
-  digitalWrite(MOTOR1F, M1F);
-  digitalWrite(MOTOR1B, M1B);
-  digitalWrite(MOTOR2F, M2F);
-  digitalWrite(MOTOR2B, M2B);
+  gpioWrite(MOTOR1F, M1F);
+  gpioWrite(MOTOR1B, M1B);
+  gpioWrite(MOTOR2F, M2F);
+  gpioWrite(MOTOR2B, M2B);
 }
 
 /*
