@@ -9,7 +9,8 @@
 #include <unistd.h>
 #include <ctype.h>
 // motor control
-#include <pigpio.h> 
+#include <pigpio.h>
+#include "stepper_motor.h"
 
 #define MOTOR1F 17
 #define MOTOR1B 27
