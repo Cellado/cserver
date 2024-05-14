@@ -108,7 +108,7 @@ int main(int argc, char*argv[]) {
       }
 
       if(strcmp(buffer, "on") == 0) {
-	set_pins(1, 1, 1, 1);
+	set_pins(1, 0, 1, 0);
 	printf("motors == 1\n"); 
       } else if (strcmp(buffer, "off") == 0) {
 	set_pins(0, 0, 0, 0);
