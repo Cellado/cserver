@@ -7,6 +7,34 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+// motor control
+#include <pigpio.h> 
+
+#define MOTOR1F 17
+#define MOTOR1B 27
+#define MOTOR2F 5
+#define MOTOR2B 6
+
+
+void init_motor() {
+  if (gpioInitialise() < 0) {
+    printf("init failed\n");
+    exit(1);
+  }
+  gpioSetMode(MOTOR1F, PI_OUTPUT);
+  gpioSetMode(MOTOR1B, PI_OUTPUT);
+  gpioSetMode(MOTOR2F, PI_OUTPUT);
+  gpioSetMode(MOTOR2B, PI_OUTPUT);
+  
+}
+
+void set_pins(int M1F, int M1B, int M2F, int M2B) {
+  gpioWrite(MOTOR1F, M1F);
+  gpioWrite(MOTOR1B, M1B);
+  gpioWrite(MOTOR2F, M2F);
+  gpioWrite(MOTOR2B, M2B);
+}
+
 /*
  * server program.
  */
@@ -15,6 +43,9 @@ int main(int argc, char*argv[]) {
     printf("need port num");
     exit(0);
   }
+  
+  init_motor();
+  
   // Af_INET: ipv4
   // SOCK_STREAM: tcp
   // 0: system chooses tcp
@@ -23,13 +54,16 @@ int main(int argc, char*argv[]) {
     printf("error making socket\n");
     return(1);
   }
+  
   // port being used
-  int port = atoi(argv[1]);
+  //  int port = atoi(argv[1]);
+  int port = 5138; 
   struct sockaddr_in address = {
     .sin_family = AF_INET, // ipv4 being used
     .sin_addr.s_addr = INADDR_ANY, // server will accept any connection.
     .sin_port = htons(port) // port byte order corrected.
   };
+  
   // assigns address to socket
   // (struct sockaddr *)&address: bind needs: pointer to
   // generic sockaddr struct
@@ -38,6 +72,7 @@ int main(int argc, char*argv[]) {
     close(server);
     return(1);
   }
+  
   // prepares server to accept connections
   // 3 : server will queue 3 connections.
   if (listen(server, 3) < 0) {
@@ -46,20 +81,40 @@ int main(int argc, char*argv[]) {
     return(1);
   }
 
-
   // store client address
   struct sockaddr_in client_address;
   socklen_t client_address_len = sizeof(client_address);
+  
   // accepts connection on server
-  // NULL doesnt store clients address info
   int newsock = accept(server, (struct sockaddr *)&client_address, &client_address_len);
   char client_ip[INET_ADDRSTRLEN];
+  
   inet_ntop(AF_INET, &client_address.sin_addr, client_ip, INET_ADDRSTRLEN);
   printf("Connection accepted from %s:%d\n", client_ip, ntohs(client_address.sin_port));
   char buffer[1024] = {0};
   int read = recv(newsock, buffer, sizeof(buffer), 0);
+  
   if(read > 0) {
     printf("The server recived: %s\n", buffer);
+    buffer[read] = '\0'; // ensure null termination
+    
+    // convert to lower case
+    for(int i = 0; buffer[i]; i++) {
+      buffer[i] = tolower(buffer[i]); 
+    }
+
+    if(strcmp(buffer, "on") == 0) {
+      set_pins(1, 1, 1, 1);
+      printf("motors == 1\n"); 
+    } else if (strcmp(buffer, "off") == 0) {
+      set_pins(0, 0, 0, 0);
+      printf("motors == 0\n");
+    } else {
+      printf("invalid command"); 
+    }
+    
+  } else if (read == 0) {
+    printf("connection closed by client\n");
   } else {
     printf("error reading\n");
   }
