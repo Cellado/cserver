@@ -2,6 +2,6 @@ compile:
 	clang -Wall -pedantic-errors server.c -lpigpio -lrt -lpthread -o server.out
 run:
 	make
-	./server.out
+	sudo ./server.out
 clean:
 	rm *.out
