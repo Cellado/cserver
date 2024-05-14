@@ -10,7 +10,6 @@
 #include <ctype.h>
 // motor control
 #include <pigpio.h>
-#include "stepper_motor.h"
 
 #define MOTOR1F 17
 #define MOTOR1B 27
@@ -19,10 +18,6 @@
 
 
 void init_motor() {
-  if (gpioInitialise() < 0) {
-    printf("init failed\n");
-    exit(1);
-  }
   gpioSetMode(MOTOR1F, PI_OUTPUT);
   gpioSetMode(MOTOR1B, PI_OUTPUT);
   gpioSetMode(MOTOR2F, PI_OUTPUT);
