@@ -36,10 +36,10 @@ void set_pins(int M1F, int M1B, int M2F, int M2B) {
  * server program.
  */
 int main(int argc, char*argv[]) {
-  if (argc < 2) {
-    printf("need port num");
-    exit(0);
-  }
+  /* if (argc < 2) { */
+  /*   printf("need port num\n"); */
+  /*   exit(0); */
+  /* } */
   
   init_motor();
   
