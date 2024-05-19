@@ -158,6 +158,10 @@ int main(int argc, char*argv[]) {
 	set_pins(0, 0, 0, 0);
 	stepMotorB(512); 
 	printf("motors == 0\n");
+      } else if (strcmp(buffer, "close") == 0) {
+	close(newsock);
+	close(server);
+	exit(0); 
       } else {
 	printf("invalid command"); 
       }
