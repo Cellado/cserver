@@ -16,6 +16,11 @@
 #define MOTOR2F 5
 #define MOTOR2B 6
 
+#define IN1 23
+#define IN2 24
+#define IN3 25
+#define IN4 16 
+
 
 void init_motor() {
 
@@ -37,6 +42,44 @@ void set_pins(int M1F, int M1B, int M2F, int M2B) {
   gpioWrite(MOTOR2F, M2F);
   gpioWrite(MOTOR2B, M2B);
 }
+
+int stepSeuence[8][4] = {
+  {1, 0, 0, 0},
+  {1, 1, 0, 0},
+  {0, 1, 0, 0},
+  {0, 1, 1, 0},
+  {0, 0, 1, 0},
+  {0, 0, 1, 1},
+  {0, 0, 0, 1},
+  {1, 0, 0, 1}
+}; 
+
+void setStep(int w1, int w2, int w3, int w4) {
+  gpioWrite(IN1, w1);
+  gpioWrite(IN2, w2);
+  gpioWrite(IN3, w3);
+  gpioWrite(IN4, w4);
+}
+
+void stepMotorF(int steps) {
+  for (int i = 0; i < steps; ++i) {
+    for (int j = 0; j < 8; ++j) {
+      setStep(stepSequence[j][0], stepSequence[j][1], stepSequence[j][2], stepSequence[j][3]);
+      usleep(1000);  // Adjust delay for speed control
+    }
+  }
+}
+
+
+void stepMotorB(int steps) {
+  for (int i = 0; i < steps; ++i) {
+    for (int j = 7; j >= 0; --j) {
+      setStep(stepSequence[j][0], stepSequence[j][1], stepSequence[j][2], stepSequence[j][3]);
+      usleep(1000);  // Adjust delay for speed control
+    }
+  }
+}
+  
 
 /*
  * server program.
@@ -109,9 +152,11 @@ int main(int argc, char*argv[]) {
 
       if(strcmp(buffer, "on") == 0) {
 	set_pins(1, 0, 1, 0);
+	stepMotorF(512); 
 	printf("motors == 1\n"); 
       } else if (strcmp(buffer, "off") == 0) {
 	set_pins(0, 0, 0, 0);
+	stepMotorB(512); 
 	printf("motors == 0\n");
       } else {
 	printf("invalid command"); 
@@ -128,39 +173,3 @@ int main(int argc, char*argv[]) {
   return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
