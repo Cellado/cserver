@@ -43,7 +43,7 @@ void set_pins(int M1F, int M1B, int M2F, int M2B) {
   gpioWrite(MOTOR2B, M2B);
 }
 
-int stepSeuence[8][4] = {
+int stepSequence[8][4] = {
   {1, 0, 0, 0},
   {1, 1, 0, 0},
   {0, 1, 0, 0},
